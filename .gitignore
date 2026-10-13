@@ -1,0 +1,22 @@
+# Python
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Database files (recreated from seed files)
+*.db
+*.sqlite
+
+# Secrets
+.env
+
+# Node / Vite
+node_modules/
+dist/
+
+# Editors and OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
