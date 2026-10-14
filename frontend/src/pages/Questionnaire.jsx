@@ -32,6 +32,7 @@ function Questionnaire() {
   const [answers, setAnswers] = useState(loadAnswers)
   const [categories, setCategories] = useState(null) // the interest tags from /api/tags
   const [tagsError, setTagsError] = useState('')
+  const [demoMode, setDemoMode] = useState(false) // the back end says whether this is a demo
 
   const step = Math.min(answers.step, TOTAL_STEPS) // an old saved "step 8" from before Step 9 becomes step 7
 
@@ -42,13 +43,39 @@ function Questionnaire() {
     saveAnswers(next)
   }
 
-  // Fetch the interest tags once.
+  // Fetch the interest tags once (and ask whether we're in demo mode).
   useEffect(() => {
+    api.get('/health').then((h) => setDemoMode(Boolean(h.demo_mode))).catch(() => {})
     api
       .get('/tags')
       .then(setCategories)
       .catch(() => setTagsError("Couldn't load the interests. Is the back end running?"))
   }, [])
+
+  // Demo only: fill in a typical student's answers so the demo can skip the typing, then jump to the last screen.
+  function fillDemoAnswers() {
+    const wanted = ['finance', 'consulting', 'chess', 'economics']
+    const ids = (categories ?? [])
+      .flatMap((c) => c.subgroups.flatMap((g) => g.tags))
+      .filter((t) => wanted.includes(t.name))
+      .map((t) => t.id)
+    set({
+      campus: 'main',
+      travel_ok: true,
+      course: 'Economics',
+      yearLabel: 'Year 2',
+      hasExperience: true,
+      experience_industry: ['Finance and banking'],
+      experience_note: 'Summer analyst at a small bank',
+      tag_ids: ids,
+      alcohol_pref: 'bars_no_drink',
+      goal: 'both',
+      looking_for: 'Mentoring or CV review',
+      offers: '',
+      availability: ['weeknights'],
+      step: TOTAL_STEPS,
+    })
+  }
 
   function next() {
     if (step === TOTAL_STEPS) navigate('/register')
@@ -69,6 +96,15 @@ function Questionnaire() {
     <div className="min-h-screen">
       <TopBar />
       <main className="mx-auto w-full max-w-xl px-5 pb-16">
+        {demoMode && categories && (
+          <button
+            type="button"
+            onClick={fillDemoAnswers}
+            className="mb-4 rounded-full border border-dashed border-brand px-4 py-2 text-sm font-medium text-brand dark:border-brand-mid dark:text-brand-mid"
+          >
+            Demo: fill in the answers for me
+          </button>
+        )}
         <ProgressBar step={step} total={TOTAL_STEPS} />
         <div className="mt-8">{screens[step]}</div>
 

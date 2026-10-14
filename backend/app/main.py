@@ -12,11 +12,13 @@ from contextlib import asynccontextmanager
 from fastapi import Depends, FastAPI
 from sqlmodel import Session, select
 
+from app import settings
 from app.database import create_db_and_tables, engine, get_session
 from app.models import Tag
 from app.routes_admin import router as admin_router
 from app.routes_dev import router as dev_router
 from app.routes_events import router as events_router
+from app.routes_linkedin import router as linkedin_router
 from app.routes_pairing import router as pairing_router
 from app.routes_users import router as users_router
 from app.seed_tags import load_tags
@@ -43,6 +45,9 @@ app.include_router(pairing_router)
 # Things to do: /api/events and /api/venues.
 app.include_router(events_router)
 
+# LinkedIn Max: /api/linkedin-max (links people choose to share; we never contact LinkedIn).
+app.include_router(linkedin_router)
+
 # Admin only (needs the ADMIN_KEY): /api/admin/refresh-events.
 app.include_router(admin_router)
 
@@ -52,8 +57,9 @@ app.include_router(dev_router)
 
 @app.get("/api/health")
 def health():
-    """A tiny check the front end calls to see whether the back end is running."""
-    return {"status": "ok"}
+    """A tiny check the front end calls to see whether the back end is running.
+    demo_mode tells the front end whether to offer demo helpers (like pre-filled answers)."""
+    return {"status": "ok", "demo_mode": settings.DEMO_MODE}
 
 
 @app.get("/api/tags")

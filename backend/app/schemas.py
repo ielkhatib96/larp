@@ -37,6 +37,27 @@ def check_ucl_email(value: str) -> str:
     return value
 
 
+LINKEDIN_PREFIXES = (
+    "https://www.linkedin.com/in/",
+    "https://linkedin.com/in/",
+    "https://uk.linkedin.com/in/",
+)
+
+
+def check_linkedin_url(value: Optional[str]) -> Optional[str]:
+    """A LinkedIn link must be a profile address on linkedin.com. Blank means 'no link'.
+
+    The link is shown to other students as a clickable link, so we must never store
+    something else (such as a javascript: address) there.
+    """
+    if value is None or value.strip() == "":
+        return None
+    value = value.strip()
+    if not value.lower().startswith(LINKEDIN_PREFIXES) or " " in value:
+        raise ValueError("Please use your LinkedIn profile link, like https://www.linkedin.com/in/your-name")
+    return value
+
+
 class RegisterIn(BaseModel):
     """Everything sent when a student creates an account (account fields + questionnaire answers)."""
 
@@ -66,6 +87,11 @@ class RegisterIn(BaseModel):
     def email_must_be_ucl(cls, value):
         return check_ucl_email(value)
 
+    @field_validator("linkedin_url")
+    @classmethod
+    def link_must_be_linkedin(cls, value):
+        return check_linkedin_url(value)
+
 
 class LoginIn(BaseModel):
     ucl_email: str
@@ -86,6 +112,11 @@ class PreferencesIn(BaseModel):
     goal: Optional[Goal] = None
     linkedin_max_optin: Optional[bool] = None
     linkedin_url: Optional[str] = Field(default=None, max_length=200)
+
+    @field_validator("linkedin_url")
+    @classmethod
+    def link_must_be_linkedin(cls, value):
+        return check_linkedin_url(value)
 
 
 class ProfileOut(BaseModel):
@@ -118,6 +149,21 @@ class MatchOut(BaseModel):
     course: Optional[str]
     year: Optional[int]
     campus: str
+    score: float
+    shared_tags: List[str]
+    reason: str
+
+
+class LinkedInOut(BaseModel):
+    """One opted-in student in the LinkedIn Max queue. Their link is here only because they chose to share it.
+    Deliberately no email, hash or alcohol preference."""
+
+    user_id: int
+    name: str
+    course: Optional[str]
+    year: Optional[int]
+    campus: str
+    linkedin_url: str
     score: float
     shared_tags: List[str]
     reason: str

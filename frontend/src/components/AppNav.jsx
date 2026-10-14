@@ -5,6 +5,7 @@ const TABS = [
   { to: '/group', label: 'My group' },
   { to: '/browse', label: 'Browse' },
   { to: '/events', label: 'Events' },
+  { to: '/linkedin-max', label: 'LinkedIn' },
   { to: '/profile', label: 'Profile' },
 ]
 

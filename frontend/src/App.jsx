@@ -5,6 +5,7 @@ import ComingSoon from './pages/ComingSoon.jsx'
 import Events from './pages/Events.jsx'
 import Group from './pages/Group.jsx'
 import Landing from './pages/Landing.jsx'
+import LinkedInMax from './pages/LinkedInMax.jsx'
 import Login from './pages/Login.jsx'
 import Pairing from './pages/Pairing.jsx'
 import Profile from './pages/Profile.jsx'
@@ -27,6 +28,7 @@ function App() {
         <Route path="/group" element={<Group />} />
         <Route path="/browse" element={<Browse />} />
         <Route path="/events" element={<Events />} />
+        <Route path="/linkedin-max" element={<LinkedInMax />} />
         <Route path="/profile" element={<Profile />} />
       </Route>
 
