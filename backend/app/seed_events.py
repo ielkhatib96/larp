@@ -59,10 +59,10 @@ def load_test_events(session: Session, now: Optional[datetime] = None) -> int:
     return added
 
 
-def load_test_venues(session: Session, now: Optional[datetime] = None) -> int:
-    """Add any missing test venues. Returns how many were added."""
+def load_test_venues(session: Session, now: Optional[datetime] = None, filename: str = "venues_test.json") -> int:
+    """Add any missing venues from a seed file (the invented test file by default). Returns how many were added."""
     now = now or datetime.now(timezone.utc)
-    items = json.loads((SEED_DIR / "venues_test.json").read_text(encoding="utf-8"))
+    items = json.loads((SEED_DIR / filename).read_text(encoding="utf-8"))
     tag_ids = _tag_ids(session)
     existing = set(session.exec(select(Venue.name)).all())
 
@@ -73,7 +73,8 @@ def load_test_venues(session: Session, now: Optional[datetime] = None) -> int:
 
         venue = Venue(
             name=item["name"], category=item["category"], area=item["area"], address=item["address"],
-            url=item["url"], alcohol_role=item["alcohol_role"], verified_on=now,
+            url=item["url"], alcohol_role=item["alcohol_role"],
+            verified_on=datetime.fromisoformat(item["verified_on"]).replace(tzinfo=timezone.utc) if item.get("verified_on") else now,
         )
         session.add(venue)
         session.flush()
@@ -83,3 +84,8 @@ def load_test_venues(session: Session, now: Optional[datetime] = None) -> int:
 
     session.commit()
     return added
+
+
+def load_venues(session: Session, now: Optional[datetime] = None) -> int:
+    """Load the real, hand-checked venues (seed/venues.json)."""
+    return load_test_venues(session, now, filename="venues.json")

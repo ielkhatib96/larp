@@ -14,6 +14,7 @@ from sqlmodel import Session, select
 
 from app.database import create_db_and_tables, engine, get_session
 from app.models import Tag
+from app.routes_admin import router as admin_router
 from app.routes_dev import router as dev_router
 from app.routes_events import router as events_router
 from app.routes_pairing import router as pairing_router
@@ -41,6 +42,9 @@ app.include_router(pairing_router)
 
 # Things to do: /api/events and /api/venues.
 app.include_router(events_router)
+
+# Admin only (needs the ADMIN_KEY): /api/admin/refresh-events.
+app.include_router(admin_router)
 
 # Read-only "look inside the database" pages at /dev/tables (development only).
 app.include_router(dev_router)

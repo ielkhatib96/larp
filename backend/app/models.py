@@ -112,6 +112,15 @@ class VenueTag(SQLModel, table=True):
     tag_id: int = Field(foreign_key="tag.id", primary_key=True)
 
 
+class ClassificationCache(SQLModel, table=True):
+    """Claude's answer for one event, saved so each event is only ever asked about once."""
+
+    source_url: str = Field(primary_key=True)
+    text_hash: str = Field(primary_key=True)  # changes if the event's title or description changes
+    answer: dict = Field(default_factory=dict, sa_column=Column(JSON))  # {"tags": [...], "event_type": ..., "alcohol_role": ...}
+    created_at: datetime = Field(default_factory=now)
+
+
 class Group(SQLModel, table=True):
     """An auto-paired group of students."""
 

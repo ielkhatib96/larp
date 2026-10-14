@@ -20,3 +20,6 @@ dist/
 .idea/
 .DS_Store
 Thumbs.db
+
+# Written by python -m app.pipeline (a trail of what the search did)
+backend/last_search_notes.txt

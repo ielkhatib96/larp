@@ -15,8 +15,10 @@ python-dotenv
 # Event scraping (Step 6)
 requests
 beautifulsoup4
+# London time zone data (Windows has none built in)
+tzdata
 
-# Claude API for event tagging (Step 6)
+# Claude API for event search and tagging (Step 6)
 anthropic
 
 # Testing

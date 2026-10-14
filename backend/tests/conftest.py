@@ -1,5 +1,7 @@
 """Shared test set-up: a throw-away in-memory database, never larp.db."""
 
+import socket
+
 import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy.pool import StaticPool
@@ -11,6 +13,21 @@ from app.match_cache import rebuild_match_cache
 from app.seed_events import load_test_events, load_test_venues
 from app.seed_profiles import SEED_PASSWORD, load_profiles
 from app.seed_tags import load_tags
+
+
+@pytest.fixture(autouse=True)
+def no_internet_in_tests(monkeypatch):
+    """Safety net: a test that tries to reach the internet fails loudly instead of quietly spending money or hitting a real site."""
+    real_connect = socket.socket.connect
+
+    def only_local(self, address, *args, **kwargs):
+        host = address[0] if isinstance(address, tuple) else str(address)
+        if host not in ("127.0.0.1", "::1", "localhost"):
+            raise AssertionError(f"A test tried to reach the internet ({host}). Use a fake instead.")
+        return real_connect(self, address, *args, **kwargs)
+
+    monkeypatch.setattr(socket.socket, "connect", only_local)
+    monkeypatch.delenv("ANTHROPIC_API_KEY", raising=False)  # a real key in .env must never be used by tests
 
 
 @pytest.fixture
