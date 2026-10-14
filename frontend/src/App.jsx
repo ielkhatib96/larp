@@ -1,33 +1,28 @@
-import { useEffect, useState } from 'react'
+import { Route, Routes } from 'react-router-dom'
+import ComingSoon from './pages/ComingSoon.jsx'
+import Landing from './pages/Landing.jsx'
+import Questionnaire from './pages/Questionnaire.jsx'
 
-// Step 0 hello page: shows the product name and whether the back end is running.
-// The real screens (landing page, questionnaire and so on) replace this from Step 7 onwards.
+// The list of pages. Each <Route> says: "when the address is this, show that page".
+// Login is a placeholder until Step 9 replaces it.
 function App() {
-  // "checking..." until the back end answers, then "ok" or "offline".
-  const [backendStatus, setBackendStatus] = useState('checking...')
-
-  // Runs once when the page loads: ask the back end if it is alive.
-  useEffect(() => {
-    fetch('/api/health')
-      .then((res) => res.json())
-      .then((data) => setBackendStatus(data.status))
-      .catch(() => setBackendStatus('offline'))
-  }, [])
-
-  const isOk = backendStatus === 'ok'
-
   return (
-    <main className="min-h-screen flex flex-col items-center justify-center gap-4 bg-slate-50 p-6">
-      <h1 className="text-5xl font-bold tracking-tight text-slate-900">LARP</h1>
-      <p className="text-slate-600">From "I don't know anyone" to "I'm meeting my group on Thursday".</p>
-      <span
-        className={`rounded-full px-4 py-1 text-sm font-medium ${
-          isOk ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-        }`}
-      >
-        backend: {backendStatus}
-      </span>
-    </main>
+    <Routes>
+      <Route path="/" element={<Landing />} />
+      <Route path="/questionnaire" element={<Questionnaire />} />
+      <Route
+        path="/login"
+        element={
+          <ComingSoon
+            title="Log in"
+            step="Step 9"
+            text="Logging in for existing members is coming soon."
+          />
+        }
+      />
+      {/* Anything else goes back to a friendly page instead of a blank screen. */}
+      <Route path="*" element={<ComingSoon title="Page not found" step="" text="That page doesn't exist." />} />
+    </Routes>
   )
 }
 
