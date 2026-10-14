@@ -38,6 +38,7 @@ class User(SQLModel, table=True):
     experience_note: Optional[str] = None  # free text, display only
     availability: list = Field(default_factory=list, sa_column=Column(JSON))  # list of free times
     linkedin_max_optin: bool = False  # only share LinkedIn if the student opts in
+    auto_pair_opt_in: bool = False  # true once they ask to be put in a group (the auto-pair pool)
     created_at: datetime = Field(default_factory=now)
 
 

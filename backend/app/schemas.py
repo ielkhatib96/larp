@@ -103,6 +103,42 @@ class ProfileOut(BaseModel):
     offers: List[str]
 
 
+class MatchOut(BaseModel):
+    """One person in a ranked match list. Deliberately no email, hash or LinkedIn link."""
+
+    user_id: int
+    name: str
+    course: Optional[str]
+    year: Optional[int]
+    campus: str
+    score: float
+    shared_tags: List[str]
+    reason: str
+
+
+class GroupMemberOut(BaseModel):
+    user_id: int
+    name: str
+    course: Optional[str]
+    year: Optional[int]
+    campus: str
+
+
+class GroupOut(BaseModel):
+    id: int
+    members: List[GroupMemberOut]
+    shared_interests: List[str]
+    first_event: Optional[dict] = None  # filled in from Step 5
+
+
+class PairOut(BaseModel):
+    """Answer to 'put me in a group': either a group, or 'waiting'."""
+
+    status: Literal["grouped", "waiting"]
+    group: Optional[GroupOut] = None
+    message: Optional[str] = None
+
+
 class RegisterOut(BaseModel):
     user: ProfileOut
     token: str

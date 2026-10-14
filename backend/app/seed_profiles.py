@@ -51,6 +51,7 @@ def load_profiles(session: Session) -> int:
             experience_note=p["experience_note"],
             availability=p["availability"],
             linkedin_max_optin=p["linkedin_max_optin"],
+            auto_pair_opt_in=True,  # seed students count as "chose auto-pair", so the demo has a pool
         )
         session.add(user)
         session.flush()  # gives the user an id so we can link tags and needs to it

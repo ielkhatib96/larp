@@ -10,6 +10,7 @@ from sqlmodel import Session, select
 
 from app.auth import create_token, get_current_user, hash_password, verify_password
 from app.database import get_session
+from app.match_cache import add_user_to_cache, rebuild_match_cache
 from app.models import Tag, User, UserNeed, UserTag
 from app.schemas import LoginIn, PreferencesIn, ProfileOut, RegisterIn, RegisterOut, TokenOut
 
@@ -91,6 +92,9 @@ def register(data: RegisterIn, session: Session = Depends(get_session)):
     session.commit()
     session.refresh(user)
 
+    # Work out the newcomer's top-20 matches now, so their list is ready straight away.
+    add_user_to_cache(session, user.id)
+
     return RegisterOut(user=build_profile(user, session), token=create_token(user.id))
 
 
@@ -130,4 +134,7 @@ def update_preferences(
     session.add(user)
     session.commit()
     session.refresh(user)
+
+    # Campus, alcohol and goal all change scores, so the saved match lists are out of date.
+    rebuild_match_cache(session)
     return build_profile(user, session)
