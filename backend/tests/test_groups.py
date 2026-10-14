@@ -51,7 +51,7 @@ def test_demo_main_gets_a_group_with_the_finance_chess_cluster(client, seeded, l
     assert "Demo Main" in names
     assert len(names & CLUSTER) >= 3
     assert "chess" in group["shared_interests"] and "finance" in group["shared_interests"]
-    assert group["first_event"] is None  # events arrive in Step 5
+    assert group["first_event"] is None  # no events are loaded in this test (see test_events.py for the case with events)
 
 
 def test_everyone_in_a_group_fits_together(client, seeded, session, login):

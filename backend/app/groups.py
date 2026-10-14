@@ -9,10 +9,12 @@ This file has no web code, so the rules are easy to read and test.
 """
 
 from collections import Counter
+from datetime import datetime, timezone
 from typing import Optional
 
 from sqlmodel import Session, select
 
+from app.events import best_event_for_group, events_from_db
 from app.matching import Person, people_from_db, score_pair
 from app.models import Group, GroupMember, User
 
@@ -115,5 +117,28 @@ def group_details(session: Session, group: Group) -> dict:
             for p in members
         ],
         "shared_interests": shared[:5],
-        "first_event": None,  # chosen in Step 5, once events exist
+        "first_event": choose_first_event(session, group, members),
+    }
+
+
+def choose_first_event(session: Session, group: Group, members: list) -> Optional[dict]:
+    """
+    The best event for the whole group (see events.best_event_for_group), saved on the group.
+    Worked out each time so it never points at an event that has since passed. None if nothing suits everyone.
+    """
+    best = best_event_for_group(members, events_from_db(session), datetime.now(timezone.utc))
+
+    new_id = best.item.id if best else None
+    if group.first_event_id != new_id:
+        group.first_event_id = new_id
+        session.add(group)
+        session.commit()
+    if best is None:
+        return None
+
+    event = best.item
+    return {
+        "event_id": event.id, "title": event.title, "start_time": event.start_time,
+        "location_name": event.location_name, "area": event.area, "event_type": event.event_type,
+        "alcohol_role": event.alcohol_role, "reason": best.reason,
     }

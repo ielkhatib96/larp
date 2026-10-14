@@ -15,6 +15,7 @@ from sqlmodel import Session, select
 from app.database import create_db_and_tables, engine, get_session
 from app.models import Tag
 from app.routes_dev import router as dev_router
+from app.routes_events import router as events_router
 from app.routes_pairing import router as pairing_router
 from app.routes_users import router as users_router
 from app.seed_tags import load_tags
@@ -37,6 +38,9 @@ app.include_router(users_router)
 
 # Matches and groups: /api/matches, /api/pair/auto, /api/group.
 app.include_router(pairing_router)
+
+# Things to do: /api/events and /api/venues.
+app.include_router(events_router)
 
 # Read-only "look inside the database" pages at /dev/tables (development only).
 app.include_router(dev_router)

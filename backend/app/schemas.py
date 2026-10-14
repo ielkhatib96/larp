@@ -6,6 +6,7 @@ wrong (bad campus, non-UCL email...) FastAPI answers 422 with a clear message
 before our own code runs.
 """
 
+from datetime import datetime
 from typing import Annotated, List, Literal, Optional
 
 from pydantic import BaseModel, Field, field_validator
@@ -124,11 +125,56 @@ class GroupMemberOut(BaseModel):
     campus: str
 
 
+class FirstEventOut(BaseModel):
+    """The event suggested for a group's first meet-up."""
+
+    event_id: int
+    title: str
+    start_time: Optional[datetime]
+    location_name: Optional[str]
+    area: str
+    event_type: str
+    alcohol_role: str
+    reason: str
+
+
 class GroupOut(BaseModel):
     id: int
     members: List[GroupMemberOut]
     shared_interests: List[str]
-    first_event: Optional[dict] = None  # filled in from Step 5
+    first_event: Optional[FirstEventOut] = None  # None if no event suits every member
+
+
+class EventOut(BaseModel):
+    """One event in a student's ranked list."""
+
+    event_id: int
+    title: str
+    start_time: Optional[datetime]
+    end_time: Optional[datetime]
+    location_name: Optional[str]
+    area: str
+    event_type: str
+    alcohol_role: str
+    tags: List[str]
+    score: float
+    reason: str
+    source_url: Optional[str]
+
+
+class VenueOut(BaseModel):
+    """One venue in a student's ranked list."""
+
+    venue_id: int
+    name: str
+    category: Optional[str]
+    area: str
+    address: Optional[str]
+    url: Optional[str]
+    alcohol_role: str
+    tags: List[str]
+    score: float
+    reason: str
 
 
 class PairOut(BaseModel):

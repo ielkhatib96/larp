@@ -8,6 +8,7 @@ from sqlmodel import Session, SQLModel, create_engine
 from app.database import get_session
 from app.main import app
 from app.match_cache import rebuild_match_cache
+from app.seed_events import load_test_events, load_test_venues
 from app.seed_profiles import SEED_PASSWORD, load_profiles
 from app.seed_tags import load_tags
 
@@ -34,6 +35,13 @@ def seeded(session):
     """The 32 seed students, with their match lists saved (like after reset_db)."""
     load_profiles(session)
     rebuild_match_cache(session)
+
+
+@pytest.fixture
+def with_events(session):
+    """The invented test events and venues (never real data)."""
+    load_test_events(session)
+    load_test_venues(session)
 
 
 @pytest.fixture

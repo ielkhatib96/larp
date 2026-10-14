@@ -105,6 +105,13 @@ class Venue(SQLModel, table=True):
     verified_on: Optional[datetime] = None  # when we last checked it still exists
 
 
+class VenueTag(SQLModel, table=True):
+    """Links a venue to its tags (up to 3 each), so venues can be matched to interests."""
+
+    venue_id: int = Field(foreign_key="venue.id", primary_key=True)
+    tag_id: int = Field(foreign_key="tag.id", primary_key=True)
+
+
 class Group(SQLModel, table=True):
     """An auto-paired group of students."""
 
