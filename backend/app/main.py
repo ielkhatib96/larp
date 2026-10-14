@@ -14,6 +14,7 @@ from sqlmodel import Session, select
 
 from app.database import create_db_and_tables, engine, get_session
 from app.models import Tag
+from app.routes_users import router as users_router
 from app.seed_tags import load_tags
 
 
@@ -29,6 +30,8 @@ async def lifespan(app: FastAPI):
 # The app object. Every route below is attached to it.
 app = FastAPI(title="LARP API", version="0.1.0", lifespan=lifespan)
 
+# Account routes: register, login, /me, /me/preferences.
+app.include_router(users_router)
 
 
 
