@@ -56,6 +56,25 @@ The Canary Wharf filter on the Career tab may look empty. Use "All areas" on sta
 | "Setup has not been run" | Double-click `setup-first-time.bat` first. |
 | Browser shows nothing at localhost:5173 | Wait 10 seconds and refresh. If still nothing, check the "LARP front end" window for a red error and send it to the owner. |
 
+## Looking behind the scenes (optional)
+
+With `start-demo.bat` running, these open in your browser:
+
+| Address | What it is |
+|---|---|
+| http://localhost:8000/docs | The LARP API: a list of every route. Click one, then **Try it out**, then **Execute**. For routes that need a login, first call **POST /api/login** with `{"ucl_email": "demo.main@ucl.ac.uk", "password": "demo1234"}`, copy the `token` from the answer, click the green **Authorize** button at the top and paste it in. |
+| http://localhost:8000/dev/tables | Every database table with its row count. Click a table name to see its rows (first 200). Read-only, and password hashes are hidden. |
+
+The tables page only works on the same computer as the back end, and the data resets each time you run `start-demo.bat`.
+
+## Editing with Claude Code (optional)
+
+1. Open **PowerShell** and run `npm install -g @anthropic-ai/claude-code` (Node.js from the steps above is already installed).
+2. In GitHub Desktop click **Repository → Open in Command Prompt** (or Open in Visual Studio Code, then **Terminal → New Terminal**).
+3. Type `claude` and press Enter. The first time, it opens a browser to sign in with your Claude account.
+4. Ask for changes in plain words, for example "make the landing page title bigger". Claude Code reads `CLAUDE.md` automatically, so it already knows the project rules.
+5. Keep `start-demo.bat` running in its own windows to see changes live, then commit and push as below.
+
 ## Sharing changes (only if you edit files)
 
 In GitHub Desktop: **Fetch origin** and **Pull** before you start (this gets teammates' work). After editing, tick your files, write a short summary,
