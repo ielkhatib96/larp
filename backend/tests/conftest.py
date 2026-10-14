@@ -7,6 +7,7 @@ from fastapi.testclient import TestClient
 from sqlalchemy.pool import StaticPool
 from sqlmodel import Session, SQLModel, create_engine
 
+from app import settings
 from app.database import get_session
 from app.main import app
 from app.match_cache import rebuild_match_cache
@@ -28,6 +29,7 @@ def no_internet_in_tests(monkeypatch):
 
     monkeypatch.setattr(socket.socket, "connect", only_local)
     monkeypatch.delenv("ANTHROPIC_API_KEY", raising=False)  # a real key in .env must never be used by tests
+    monkeypatch.setattr(settings, "REQUIRE_UCL_EMAIL", True)  # tests check the real rule, whatever .env says
 
 
 @pytest.fixture

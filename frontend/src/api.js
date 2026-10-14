@@ -19,7 +19,9 @@ async function request(path, options = {}) {
     let detail = `Request failed (${response.status})`
     if (data && typeof data.detail === 'string') detail = data.detail
     else if (data && Array.isArray(data.detail) && data.detail[0]?.msg) detail = data.detail[0].msg.replace(/^Value error, /, '')
-    throw new Error(detail)
+    const error = new Error(detail)
+    error.status = response.status // lets screens react to 401 (not logged in) or 404 (nothing there)
+    throw error
   }
   return data
 }

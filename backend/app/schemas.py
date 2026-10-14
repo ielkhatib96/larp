@@ -11,6 +11,8 @@ from typing import Annotated, List, Literal, Optional
 
 from pydantic import BaseModel, Field, field_validator
 
+from app import settings
+
 # The allowed values for the fixed-choice answers.
 Campus = Literal["main", "canary", "both"]
 AlcoholPref = Literal["drinks", "bars_no_drink", "avoid"]
@@ -23,11 +25,15 @@ MAX_TAGS = 8
 
 
 def check_ucl_email(value: str) -> str:
-    """Lower-case the email and make sure it is a UCL one."""
+    """Lower-case the email and make sure it is a UCL one (or just email-shaped, in demo mode)."""
     value = value.strip().lower()
     name, _, domain = value.partition("@")
-    if not name or domain != "ucl.ac.uk":
-        raise ValueError("Please use your UCL email address (ending in @ucl.ac.uk).")
+    if settings.REQUIRE_UCL_EMAIL:
+        if not name or domain != "ucl.ac.uk":
+            raise ValueError("Please use your UCL email address (ending in @ucl.ac.uk).")
+    elif not name or "." not in domain or " " in value:
+        # Demo mode: any address will do, as long as it looks like name@something.something.
+        raise ValueError("Please enter an email address like you@example.com.")
     return value
 
 

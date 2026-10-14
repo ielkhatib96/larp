@@ -65,6 +65,22 @@ def test_non_ucl_email_is_rejected(client):
     assert register(client, ucl_email="@ucl.ac.uk").status_code == 422
 
 
+def test_demo_mode_accepts_any_email_and_still_stores_the_account(client, monkeypatch):
+    from app import settings
+
+    monkeypatch.setattr(settings, "REQUIRE_UCL_EMAIL", False)
+    response = register(client, ucl_email="Someone@Gmail.com")
+    assert response.status_code == 200
+    assert response.json()["user"]["ucl_email"] == "someone@gmail.com"
+    # The account is real: it can log in again with the same email and password.
+    login = client.post("/api/login", json={"ucl_email": "someone@gmail.com", "password": "correct-horse"})
+    assert login.status_code == 200
+    # Duplicates are still refused, and things that aren't emails at all are still rejected.
+    assert register(client, ucl_email="SOMEONE@gmail.com").status_code == 409
+    assert register(client, ucl_email="not-an-email").status_code == 422
+    assert register(client, ucl_email="a b@c.com").status_code == 422
+
+
 def test_duplicate_email_is_rejected(client):
     assert register(client).status_code == 200
     assert register(client).status_code == 409

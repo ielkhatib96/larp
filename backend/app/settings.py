@@ -22,6 +22,10 @@ ADMIN_KEY = os.getenv("ADMIN_KEY", "dev-only-admin-key")
 # true = no live scraping and no live Claude calls.
 DEMO_MODE = os.getenv("DEMO_MODE", "true").lower() == "true"
 
+# true = only @ucl.ac.uk emails can register (the real rule).
+# Set REQUIRE_UCL_EMAIL=false in .env for the demo, where students can't make UCL addresses.
+REQUIRE_UCL_EMAIL = os.getenv("REQUIRE_UCL_EMAIL", "true").lower() == "true"
+
 # How long a login token stays valid.
 TOKEN_HOURS = 24
 

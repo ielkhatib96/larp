@@ -63,6 +63,21 @@ export function Chip({ label, selected, disabled, onClick }) {
   )
 }
 
+// A label plus a text box (used by the register, log in and profile forms).
+export function TextField({ label, value, onChange, ...inputProps }) {
+  return (
+    <label className="block">
+      <span className="mb-1.5 block font-medium">{label}</span>
+      <input
+        {...inputProps}
+        value={value}
+        onChange={(event) => onChange(event.target.value)}
+        className="min-h-14 w-full rounded-2xl border-2 border-ink/15 bg-white px-4 text-lg text-ink dark:border-white/25"
+      />
+    </label>
+  )
+}
+
 // A label plus a dropdown.
 export function SelectField({ label, value, onChange, children }) {
   return (
